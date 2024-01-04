@@ -1,9 +1,6 @@
 <?php
 
-// Include the Student class
 include_once 'Student.php';
-
-// Include the student data
 include_once 'data.in.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,23 +10,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'view':
             $studentId = isset($_POST['studentId']) ? $_POST['studentId'] : '';
             if (array_key_exists($studentId, $students)) {
-                // Return HTML form filled with student's details
                 $student = $students[$studentId];
-                echo "<h3>Student Details</h3>";
-                echo "<p>Student ID: $student->studentId</p>";
-                echo "<p>First Name: $student->firstName</p>";
-                echo "<p>Last Name: $student->lastName</p>";
-                echo "<p>Gender: $student->gender</p>";
-                echo "<p>Date of Birth: $student->dateOfBirth</p>";
-                echo "<p>Address: $student->address</p>";
-                echo "<p>City: $student->city</p>";
-                echo "<p>Country: $student->country</p>";
-                echo "<p>Tel: $student->tel</p>";
-            } else {
-                echo "<p>Student not found!</p>";
-            }
-            break;
+                $responseData = [
+                    'firstName' => $student->firstName,
+                    'lastName' => $student->lastName,
+                    'gender' => $student->gender,
+                    'dateOfBirth' => $student->dateOfBirth,
+                    'address' => $student->address,
+                    'city' => $student->city,
+                    'country' => $student->country,
+                    'tel' => $student->tel,
+                ];
 
+                // response
+                header('Content-Type: application/json');
+                echo json_encode($responseData);
+            } else {
+                //  not found
+                $errorResponse = ['error' => 'Student not found!'];
+                header('Content-Type: application/json');
+                echo json_encode($errorResponse);
+            }
+            exit;  // Terminate script after sending the response
+            break;
         case 'insert':
             // Handle Insert operation
             $newStudentId = isset($_POST['newStudentId']) ? $_POST['newStudentId'] : '';
@@ -84,77 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<p>Invalid operation!</p>";
     }
 }
-
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Profile</title>
-</head>
-<body>
-    <h2>Student Profile</h2>
-
-    <!-- View Section -->
-    <form action="index.php" method="post">
-        <h3>View Student</h3>
-        <label for="studentId">Enter Student ID:</label>
-        <input type="text" id="studentId" name="studentId">
-        <input type="hidden" name="operation" value="view">
-        <button type="submit">View</button>
-    </form>
-
-    <!-- Insert Section -->
-    <form action="index.php" method="post">
-        <h3>Insert Student</h3>
-        <label for="newStudentId">Student ID:</label>
-        <input type="text" id="newStudentId" name="newStudentId" required>
-        <label for="newFirstName">First Name:</label>
-        <input type="text" id="newFirstName" name="newFirstName" required>
-        <label for="newLastName">Last Name:</label>
-        <input type="text" id="newLastName" name="newLastName" required>
-        <label for="newGender">Gender:</label>
-        <input type="text" id="newGender" name="newGender" required>
-        <label for="newDateOfBirth">Date of Birth:</label>
-        <input type="text" id="newDateOfBirth" name="newDateOfBirth" required>
-        <label for="newAddress">Address:</label>
-        <input type="text" id="newAddress" name="newAddress" required>
-        <label for="newCity">City:</label>
-        <input type="text" id="newCity" name="newCity" required>
-        <label for="newCountry">Country:</label>
-        <input type="text" id="newCountry" name="newCountry" required>
-        <label for="newTel">Tel:</label>
-        <input type="text" id="newTel" name="newTel" required>
-        <input type="hidden" name="operation" value="insert">
-        <button type="submit">Insert</button>
-    </form>
-
-    <!-- Update Section -->
-    <form action="index.php" method="POST">
-        <h3>Update Student</h3>
-        <label for="studentIdToUpdate">Student ID to Update:</label>
-        <input type="text" id="studentIdToUpdate" name="studentIdToUpdate" required>
-        <label for="updatedFirstName">Updated First Name:</label>
-        <input type="text" id="updatedFirstName" name="updatedFirstName" required>
-        <label for="updatedLastName">Updated Last Name:</label>
-        <input type="text" id="updatedLastName" name="updatedLastName" required>
-        <label for="updatedGender">Updated Gender:</label>
-        <input type="text" id="updatedGender" name="updatedGender" required>
-        <label for="updatedDateOfBirth">Updated Date of Birth:</label>
-        <input type="text" id="updatedDateOfBirth" name="updatedDateOfBirth" required>
-        <label for="updatedAddress">Updated Address:</label>
-        <input type="text" id="updatedAddress" name="updatedAddress" required>
-        <label for="updatedCity">Updated City:</label>
-        <input type="text" id="updatedCity" name="updatedCity" required>
-        <label for="updatedCountry">Updated Country:</label>
-        <input type="text" id="updatedCountry" name="updatedCountry" required>
-        <label for="updatedTel">Updated Tel:</label>
-        <input type="text" id="updatedTel" name="updatedTel" required>
-        <input type="hidden" name="operation" value="update">
-        <button type="submit">Update</button>
-    </form>
-
 </body>
 </html>

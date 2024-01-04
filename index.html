@@ -4,112 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+    <link rel="stylesheet" type="text/css" href="styles.css"> 
 
-        #container {
-            position: relative;
-            width: 80vh; /* Set the desired width here */
-            height: 60vh; /* Set the desired height here */
-            border: 2px solid #000;
-            padding: 20px; /* Add padding for better visibility */
-            display: flex;
-            flex-direction: column; /* Display form elements in a column */
-        }
-
-        #label {
-            position: absolute;
-            top: -10px;
-            left: 12%;
-            transform: translateX(-50%); /* Center the label horizontally */
-            height: 20px;
-            width: 100px;
-            background-color: rgb(255, 255, 255);
-            border: 2px solid rgb(255, 255, 255);
-            text-align: center;
-            line-height: 20px;
-        }
-
-        .form-container {
-            flex: 1; /* Allow the form container to take up remaining space */
-            
-        }
-
-        .form-group {
-            margin-bottom: 20px; /* Increase spacing between form groups */
-            display: flex;
-            flex-wrap: wrap; /* Allow items to wrap to the next line */
-
-        }
-
-        .form-group label,
-        .form-group input,
-        .form-group select {
-            margin-bottom: 5px;
-            font-size: 14px; /* Adjust font size */
-            
-        }
-
-        .form-group input,
-        .form-group select {
-            flex: 0.45; /* Take up remaining space */
-            margin-right: 6px;
-            
-        }
-
-        .gender-options {
-            display: flex;
-        }
-
-        .gender-option {
-            margin-right: 10px;
-        }
-
-        button {
-            padding: 8px 15px;
-            margin-right: 10px;
-            cursor: pointer;
-            font-size: 12px; /* Adjust font size */
-        }
-    </style>
 </head>
 <body>
     <div id="container">
         <div id="label">Student Profile</div>
         <div class="form-container">
             <div class="form-group">
-                <label for="studentId">Student ID:</label>
-                <input type="text" id="studentId" name="studentId">
+                <label for="studentId"class="required">Student ID:</label>
+                <input type="text" id="studentId" name="studentId" required>
             </div>
             <div class="form-group">
-                <label for="firstName">First Name:</label>
-                <input type="text" id="firstName" name="firstName">
-                <label for="lastName">Last Name:</label>
-                <input type="text" id="lastName" name="lastName">
+                <label for="firstName"class="required">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <label for="lastName"class="required">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
             </div>
             <div class="form-group">
                 <label>Gender:</label>
                 <div class="gender-options">
                     <div class="gender-option">
-                        <input type="radio" id="male" name="gender" value="Male">
+                        <input type="radio" id="male" name="gender" value="Male" >
                         <label for="male">Male</label>
                     </div>
                     <div class="gender-option">
-                        <input type="radio" id="female" name="gender" value="Female">
+                        <input type="radio" id="female" name="gender" value="Female" >
                         <label for="female">Female</label>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <label for="dateOfBirth">Date of Birth:</label>
-                <input type="date" id="dateOfBirth" name="dateOfBirth">
+                <label for="dateOfBirth"class="required">Date of Birth:</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
             </div>
             <div class="form-group">
                 <label for="address">Address:</label>
@@ -134,42 +61,81 @@
         </div>
     </div>
 
+    // myScript code
     <script>
-        function viewStudent() {
-            const studentId = document.getElementById('studentId').value;
-    
-            fetch('index.php', {
-                method: 'POST',
-                body: new URLSearchParams({
-                    operation: 'view',
-                    studentId: studentId,
-                }),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => console.error('Error:', error));
+function viewStudent() {
+    const studentId = document.getElementById('studentId').value;
+
+    fetch('index.php', {
+        method: 'POST',
+        body: new URLSearchParams({
+            operation: 'view',
+            studentId: studentId,
+        }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    })
+    .then(response => response.json()) 
+    .then(data => {
+        console.log('Raw Response:', data);  
+
+        if (data.hasOwnProperty('error')) {
+            if (data.error === 'Student not found') {
+                alert('Sorry, the student with ID ' + studentId + ' was not found. Please check the ID and try again.');            } else {
+                console.error(data.error);
+            }
+        } else {
+            document.getElementById('firstName').value = data.firstName;
+            document.getElementById('lastName').value = data.lastName;
+
+            const genderOptions = document.querySelectorAll('input[name="gender"]');
+            genderOptions.forEach(option => {
+                option.checked = option.value === data.gender;
+            });
+
+            document.getElementById('dateOfBirth').value = data.dateOfBirth;
+            document.getElementById('address').value = data.address;
+            document.getElementById('city').value = data.city;
+            document.getElementById('country').value = data.country;
+            document.getElementById('tel').value = data.tel;
         }
+    })
+    .catch(error => console.error('Error:', error));
+}
+function clearFields() {
+            document.getElementById('studentId').value = '';
+        document.getElementById('firstName').value = '';
+        document.getElementById('lastName').value = '';
+        document.getElementById('dateOfBirth').value = '';
+        document.getElementById('address').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('country').value = '';
+        document.getElementById('tel').value = '';
+
+        //  gender 
+        const genderOptions = document.querySelectorAll('input[name="gender"]');
+        genderOptions.forEach(option => option.checked = false);
+        }
+
     
 
-        function insertStudent() {
+function insertStudent() {
     const newStudentId = document.getElementById('studentId').value;
     const newFirstName = document.getElementById('firstName').value;
     const newLastName = document.getElementById('lastName').value;
-
-    // Check if a radio button with the name "gender" is checked
     const genderRadioButton = document.querySelector('input[name="gender"]:checked');
     const newGender = genderRadioButton ? genderRadioButton.value : '';
-
     const newDateOfBirth = document.getElementById('dateOfBirth').value;
     const newAddress = document.getElementById('address').value;
     const newCity = document.getElementById('city').value;
     const newCountry = document.getElementById('country').value;
     const newTel = document.getElementById('tel').value;
+
+    if (!newStudentId || !newFirstName || !newLastName  || !newDateOfBirth) {
+        alert('fill the fileds that have a red star beside it!.');
+        return; 
+    }
 
     fetch('index.php', {
         method: 'POST',
@@ -192,15 +158,21 @@
     .then(response => response.text())
     .then(data => {
         console.log(data);
+
+        if (data.includes('Student inserted successfully')) {
+            alert(' the new student inserted successfully!');
+            clearFields();
+        } else {
+            alert('Error inserting student. Please try again.');
+        }
     });
-}
-function updateStudent() {
+}function updateStudent() {
     const studentIdToUpdate = document.getElementById('studentId').value;
     const updatedFirstName = document.getElementById('firstName').value;
     const updatedLastName = document.getElementById('lastName').value;
     const genderRadioButton = document.querySelector('input[name="gender"]:checked');
     const updatedGender = genderRadioButton ? genderRadioButton.value : '';
-    const newDateOfBirth = document.getElementById('dateOfBirth').value;
+    const updatedDateOfBirth = document.getElementById('dateOfBirth').value;  
     const updatedAddress = document.getElementById('address').value;
     const updatedCity = document.getElementById('city').value;
     const updatedCountry = document.getElementById('country').value;
@@ -214,7 +186,7 @@ function updateStudent() {
             updatedFirstName:updatedFirstName,
             updatedLastName: updatedLastName,
             updatedGender: updatedGender,
-            newDateOfBirth: newDateOfBirth,
+            updatedDateOfBirth: updatedDateOfBirth,
             updatedAddress: updatedAddress,
             updatedCity: updatedCity,
             updatedCountry: updatedCountry,
@@ -230,20 +202,7 @@ function updateStudent() {
     })
     .catch(error => console.error('Error:', error));
 }
-        function clearFields() {
-            document.getElementById('studentId').value = '';
-        document.getElementById('firstName').value = '';
-        document.getElementById('lastName').value = '';
-        document.getElementById('dateOfBirth').value = '';
-        document.getElementById('address').value = '';
-        document.getElementById('city').value = '';
-        document.getElementById('country').value = '';
-        document.getElementById('tel').value = '';
-
-        // Clear gender radio buttons
-        const genderOptions = document.querySelectorAll('input[name="gender"]');
-        genderOptions.forEach(option => option.checked = false);
-        }
+       
     </script>
 </body>
 </html>
