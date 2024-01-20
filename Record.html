@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" type="text/css" href="Recordstyles.css"> 
+</head>
+<body>
+    <div id="container">
+        <div id="label">Student Record</div>
+        <div class="form-container">
+            <div class="form-group">
+                <label for="studentId" class="required">Student ID:</label>
+                <input type="text" id="studentId" name="studentId" required>
+            </div>
+            <div class="form-group">
+                <label for="firstName" class="required">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <label for="lastName" class="required">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label>Gender:</label>
+                <div class="gender-options">
+                    <div class="gender-option">
+                        <input type="radio" id="male" name="gender" value="Male" required>
+                        <label for="male">Male</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="female" name="gender" value="Female" required>
+                        <label for="female">Female</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="dateOfBirth" class="required">Date of Birth:</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address"required>
+            </div>
+            <div class="form-group">
+                <label for="Department">Department:</label>
+                <input type="text" id="Department" name="Department"required>
+            </div>
+            <div class="form-group">
+                <label for="Avarage">Avarage:</label>
+                <input type="text" id="Avarage" name="Avarage"required>
+            </div>
+
+
+            
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city">
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country"required>
+            </div>
+            <div class="form-group">
+                <label for="tel">Tel:</label>
+                <input type="text" id="tel" name="tel" placeholder="0569999999"required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" placeholder="@exp.com"required>
+            </div>
+            <div class="form-group">
+                <label for="photo">Student Photo:</label>
+                <button type="button" id="choosePhotoButton">Choose File</button>
+                <input type="file" id="photo" name="photo" style="display: none;">
+            </div>
+            
+            <div class="form-group">
+                <button type="button" onclick="insertStudent()">Insert</button>
+                
+            </div>
+    
+        </div>
+
+    </div>
+
+    <script>
+document.getElementById('choosePhotoButton').addEventListener('click', function () {
+    document.getElementById('photo').click();
+});
+
+
+        function insertStudent() {
+    const newStudentId = document.getElementById('studentId').value;
+    const newFirstName = document.getElementById('firstName').value;
+    const newLastName = document.getElementById('lastName').value;
+    const genderRadioButton = document.querySelector('input[name="gender"]:checked');
+    const newGender = genderRadioButton ? genderRadioButton.value : '';
+    const newDateOfBirth = document.getElementById('dateOfBirth').value;
+    const newAddress = document.getElementById('address').value;
+    const newDepartment = document.getElementById('Department').value;
+    const newAverage = document.getElementById('Avarage').value;
+    const newCity = document.getElementById('city').value;
+    const newCountry = document.getElementById('country').value;
+    const newTel = document.getElementById('tel').value;
+    const newEmail = document.getElementById('email').value;
+    const photoInput = document.getElementById('photo');
+    const selectedPhoto = photoInput.files[0]; // Get the selected file
+
+    if (!newStudentId || !newFirstName || !newLastName || !newDateOfBirth ) {
+        alert('Fill all required fields.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('operation', 'insert');
+    formData.append('newStudentId', newStudentId);
+    formData.append('newFirstName', newFirstName);
+    formData.append('newLastName', newLastName);
+    formData.append('newGender', newGender);
+    formData.append('newDateOfBirth', newDateOfBirth);
+    formData.append('newAddress', newAddress);
+    formData.append('newCity', newCity);
+    formData.append('newCountry', newCountry);
+    formData.append('newTel', newTel);
+    formData.append('newDepartment', newDepartment); 
+    formData.append('newAverage', newAverage); 
+    formData.append('newEmail', newEmail); 
+    formData.append('photo', selectedPhoto); 
+
+    fetch('insert.php', {
+        method: 'POST',
+        body: formData, 
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+
+        if (data.includes('Student inserted successfully')) {
+            alert('The new student was inserted successfully!');
+        } else {
+            alert('Error inserting student. Please try again.');
+        }
+    });
+}
+       
+    </script>
+</body>
+</html>

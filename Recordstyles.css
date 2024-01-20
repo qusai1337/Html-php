@@ -5,13 +5,16 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    overflow: hidden; 
 
 }
 
 #container {
     position: relative;
-    width: 80vh;
-    height: 60vh;
+    max-width: 90vh; 
+    width: 100%; 
+    height: auto; 
+
     border: 2px solid #000;
     border-radius: 10px; 
     padding: 20px;
@@ -20,6 +23,7 @@ body {
 }
 
 #label {
+
     position: absolute;
     top: -10px;
     left: 12%;
@@ -41,9 +45,12 @@ body {
     margin-bottom: 20px;
     display: flex;
     flex-wrap: wrap;
+    
 }
 
-.form-group label,
+.form-group label{
+    justify-content: center;
+}
 .form-group input,
 .form-group select {
     margin-bottom: 8px;
